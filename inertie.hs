@@ -97,13 +97,14 @@ randomColor = do
 {- méthode principale du programme -}
 main :: IO ()
 main = do
-	values <- generatePoints 30 0 100
-	let nbclasses = 6
+	values <- generatePoints 10000 0 100
+	let nbclasses = 15
 	initialPartition <- randomPartition values nbclasses
 	let lastPartition = refinePartition initialPartition
 	points <- sequence (map (\x -> getGnuPlotData x lastPartition) [1..nbclasses])
 	let allDatas = points ++ barycentres
 		where
-			barycentres = [Data2D [Title "Barycentres", Color Yellow] [] (map (\x -> bary (getPointsOfClass lastPartition x)) [1..nbclasses])]
+			classes = nub (map snd lastPartition)
+			barycentres = [Data2D [Title "Barycentres", Color Yellow] [] (map (\x -> bary (getPointsOfClass lastPartition x)) classes)]
 	plot X11 allDatas
-	print "lol"
+	print "end"
